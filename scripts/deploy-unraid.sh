@@ -91,6 +91,35 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  license-fe:
+    image: node:20-alpine
+    container_name: licensing-service-fe
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - fe-dist:/app/dist/apps/license-fe
+    ports:
+      - "4210:4210"
+    environment:
+      - NODE_ENV=production
+    command: >
+      sh -c "
+        if [ ! -d node_modules ]; then
+          echo '📦 Installing dependencies...' &&
+          npm ci --legacy-peer-deps
+        fi &&
+        echo '🔨 Building admin dashboard...' &&
+        npx nx build license-fe --configuration=production &&
+        echo '🚀 Serving admin dashboard...' &&
+        npx http-server dist/apps/license-fe/browser -p 4210
+      "
+    restart: unless-stopped
+    depends_on:
+      - license-api
+
+volumes:
+  fe-dist:
 EOF
 
 echo "✅ Docker compose configured"
@@ -119,8 +148,10 @@ fi
 echo ""
 echo "🎉 Deployment complete!"
 echo ""
-echo "📍 License API: http://192.168.1.100:3200/api"
-echo "📍 Public URL:  https://api.bitbonsai.app (or your configured domain)"
+echo "📍 License API:    http://192.168.1.100:3200/api"
+echo "📍 Admin Dashboard: http://192.168.1.100:4210"
+echo "📍 Public API URL:  https://api.bitbonsai.app (or your configured domain)"
 echo ""
 echo "💡 Watch logs:"
 echo "   ssh $UNRAID_SSH 'docker logs -f licensing-service-api'"
+echo "   ssh $UNRAID_SSH 'docker logs -f licensing-service-fe'"
