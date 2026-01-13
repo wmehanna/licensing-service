@@ -100,7 +100,7 @@ services:
       - ./:/app
       - fe-dist:/app/dist/apps/license-fe
     ports:
-      - "4210:4210"
+      - "3210:3210"
     environment:
       - NODE_ENV=production
     command: >
@@ -110,9 +110,9 @@ services:
           npm ci --legacy-peer-deps
         fi &&
         echo '🔨 Building admin dashboard...' &&
-        npx nx build license-fe --configuration=production &&
+        npx nx build admin-dashboard --configuration=production &&
         echo '🚀 Serving admin dashboard...' &&
-        npx http-server dist/apps/license-fe/browser -p 4210
+        npx http-server dist/apps/admin-dashboard/browser -p 3210
       "
     restart: unless-stopped
     depends_on:
@@ -149,7 +149,7 @@ echo ""
 echo "🎉 Deployment complete!"
 echo ""
 echo "📍 License API:    http://192.168.1.100:3200/api"
-echo "📍 Admin Dashboard: http://192.168.1.100:4210"
+echo "📍 Admin Dashboard: http://192.168.1.100:3210"
 echo "📍 Public API URL:  https://api.bitbonsai.app (or your configured domain)"
 echo ""
 echo "💡 Watch logs:"
