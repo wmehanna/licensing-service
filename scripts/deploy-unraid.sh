@@ -110,9 +110,9 @@ services:
           npm ci --legacy-peer-deps
         fi &&
         echo '🔨 Building admin dashboard...' &&
-        npx nx build admin-dashboard --configuration=production &&
+        npx nx build license-fe --configuration=production &&
         echo '🚀 Serving admin dashboard...' &&
-        npx http-server dist/apps/admin-dashboard/browser -p 3210
+        npx http-server dist/apps/license-fe/browser -p 3210
       "
     restart: unless-stopped
     depends_on:
