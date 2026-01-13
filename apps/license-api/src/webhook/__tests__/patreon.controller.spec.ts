@@ -1,4 +1,4 @@
-import { LicenseTier, PaymentProvider } from '.prisma/license-client';
+import { LicenseTier, PaymentProvider } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as crypto from 'crypto';

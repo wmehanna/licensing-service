@@ -1,4 +1,4 @@
-import { LicenseStatus, LicenseTier, PaymentProvider } from '.prisma/license-client';
+import { LicenseStatus, LicenseTier, PaymentProvider } from '@prisma/client';
 import { NotFoundException } from '@nestjs/common';
 import { CryptoService } from '../../crypto/crypto.service';
 import { LicenseTierDto } from '../_dtos';

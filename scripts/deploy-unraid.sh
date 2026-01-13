@@ -40,6 +40,7 @@ rsync -az \
     ./package.json \
     ./package-lock.json \
     ./nx.json \
+    ./tsconfig.base.json \
     $UNRAID_SSH:$DEPLOY_PATH/
 
 echo "✅ Package files synced"

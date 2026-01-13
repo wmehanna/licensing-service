@@ -4,7 +4,7 @@ import {
   Prisma,
   WebhookEventStatus,
   WebhookEventType,
-} from '.prisma/license-client';
+} from '@prisma/client';
 import { Injectable, Logger } from '@nestjs/common';
 import { EmailService } from '../../email/email.service';
 import { LicenseService } from '../../license/_services/license.service';

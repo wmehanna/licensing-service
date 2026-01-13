@@ -1,5 +1,4 @@
-import { LicenseTier, PaymentProvider } from '.prisma/license-client';
-import { determineLicenseTierFromWebhook } from '@bitbonsai/shared-models';
+import { LicenseTier, PaymentProvider } from '@prisma/client';
 import {
   Body,
   Controller,
@@ -157,22 +156,15 @@ export class PatreonController {
   }
 
   private determineTier(payload: PatreonWebhookPayload): LicenseTier {
-    const tiers = payload.included?.filter((i) => i.type === 'tier') ?? [];
-    const entitledTierIds =
-      payload.data.relationships?.currently_entitled_tiers?.data.map((t) => t.id) ?? [];
+    const pledgeAmount = payload.data.attributes.currently_entitled_amount_cents;
 
-    // Collect entitled tier titles
-    const tierTitles: string[] = [];
-    for (const tier of tiers) {
-      if (entitledTierIds.includes(tier.id) && tier.attributes.title) {
-        tierTitles.push(tier.attributes.title);
-      }
-    }
+    // Map pledge amount to license tier
+    // TODO: Make this configurable per project when multi-tenancy is added
+    if (pledgeAmount >= 2500) return LicenseTier.PATREON_ULTIMATE;
+    if (pledgeAmount >= 1500) return LicenseTier.PATREON_PRO;
+    if (pledgeAmount >= 1000) return LicenseTier.PATREON_PLUS;
+    if (pledgeAmount >= 500) return LicenseTier.PATREON_SUPPORTER;
 
-    // Use shared configuration for tier determination
-    return determineLicenseTierFromWebhook({
-      entitledTierTitles: tierTitles,
-      pledgeAmountCents: payload.data.attributes.currently_entitled_amount_cents,
-    }) as any;
+    return LicenseTier.FREE;
   }
 }

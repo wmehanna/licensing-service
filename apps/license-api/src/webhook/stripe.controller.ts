@@ -1,4 +1,4 @@
-import { LicenseTier, PaymentProvider } from '.prisma/license-client';
+import { LicenseTier, PaymentProvider } from '@prisma/client';
 import {
   Controller,
   Headers,

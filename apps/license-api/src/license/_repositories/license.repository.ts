@@ -1,4 +1,4 @@
-import { License, LicenseStatus, LicenseTier, PaymentProvider } from '.prisma/license-client';
+import { License, LicenseStatus, LicenseTier, PaymentProvider } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 

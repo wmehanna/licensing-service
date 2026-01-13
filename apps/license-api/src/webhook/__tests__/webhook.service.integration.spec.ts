@@ -4,7 +4,7 @@ import {
   PaymentProvider,
   WebhookEventStatus,
   WebhookEventType,
-} from '.prisma/license-client';
+} from '@prisma/client';
 import { CryptoService } from '../../crypto/crypto.service';
 import { EmailService } from '../../email/email.service';
 import { LicenseRepository } from '../../license/_repositories/license.repository';
