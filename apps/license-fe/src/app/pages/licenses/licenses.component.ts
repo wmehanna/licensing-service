@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { License } from '../../services/license-api.service';
 import * as LicensesActions from './+state/licenses.actions';
 import {
   selectCurrentPage,
@@ -329,7 +330,7 @@ export class LicensesComponent implements OnInit, OnDestroy {
     const reason = prompt('Reason for revoking:');
     if (!reason) return;
 
-    this.store.dispatch(LicensesActions.revokeLicense({ licenseId: Number(license.id), reason }));
+    this.store.dispatch(LicensesActions.revokeLicense({ licenseId: license.id, reason }));
 
     // Reload licenses after revocation
     setTimeout(() => this.loadLicenses(), 500);

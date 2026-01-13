@@ -45,7 +45,7 @@ export const createLicenseFailure = createAction(
 
 export const revokeLicense = createAction(
   '[Licenses] Revoke License',
-  props<{ licenseId: number; reason: string }>()
+  props<{ licenseId: string; reason: string }>()
 );
 
 export const revokeLicenseSuccess = createAction('[Licenses] Revoke License Success');

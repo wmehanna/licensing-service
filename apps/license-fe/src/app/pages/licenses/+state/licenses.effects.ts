@@ -81,7 +81,7 @@ export class LicensesEffects {
     this.actions$.pipe(
       ofType(LicensesActions.revokeLicense),
       switchMap(({ licenseId, reason }) =>
-        this.licenseApi.revokeLicense(String(licenseId), reason).pipe(
+        this.licenseApi.revokeLicense(licenseId, reason).pipe(
           map(() => LicensesActions.revokeLicenseSuccess()),
           catchError((error) =>
             of(
