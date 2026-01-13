@@ -108,11 +108,11 @@ import { LicensesBo } from './licenses.bo';
             Previous
           </button>
           <span class="bb-pagination__info">
-            {{ LicensesBo.getPageInfo(currentPage$ | async ?? 0, (licenses$ | async)?.length ?? 0, total$ | async ?? 0) }}
+            {{ LicensesBo.getPageInfo((currentPage$ | async) ?? 0, ((licenses$ | async)?.length ?? 0), (total$ | async) ?? 0) }}
           </span>
           <button
             class="bb-btn bb-btn--outline"
-            [disabled]="!LicensesBo.canGoNext(currentPage$ | async ?? 0, pageSize$ | async ?? 20, total$ | async ?? 0)"
+            [disabled]="!LicensesBo.canGoNext((currentPage$ | async) ?? 0, (pageSize$ | async) ?? 20, (total$ | async) ?? 0)"
             (click)="nextPage()"
           >
             Next

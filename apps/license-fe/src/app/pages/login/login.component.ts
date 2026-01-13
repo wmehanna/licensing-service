@@ -26,8 +26,8 @@ import { LoginBo } from './login.bo';
             required
             autocomplete="off"
           />
-          <button type="submit" [disabled]="LoginBo.isFormDisabled(apiKey, loading$ | async)">
-            {{ LoginBo.getButtonText(loading$ | async) }}
+          <button type="submit" [disabled]="LoginBo.isFormDisabled(apiKey, (loading$ | async) ?? false)">
+            {{ LoginBo.getButtonText((loading$ | async) ?? false) }}
           </button>
         </form>
 
