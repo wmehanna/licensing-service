@@ -1,8 +1,8 @@
 export default {
-  displayName: 'admin-dashboard',
+  displayName: 'license-fe',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-  coverageDirectory: '../../coverage/apps/admin-dashboard',
+  coverageDirectory: '../../coverage/apps/license-fe',
   transform: {
     '^.+\\.(ts|mjs|js|html)$': [
       'jest-preset-angular',
