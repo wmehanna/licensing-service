@@ -1,54 +1,59 @@
 #!/bin/bash
 
-# BitBonsai License API - Deploy to Unraid
-# Syncs code and restarts container
+# Licensing Service - Deploy to Unraid
+# Syncs code and restarts containers
 
 set -e
 
 UNRAID_HOST="unraid"
 UNRAID_USER="root"
-DEPLOY_PATH="/mnt/user/appdata/bitbonsai-license-api"
+DEPLOY_PATH="/mnt/user/appdata/licensing-service"
 UNRAID_SSH="${UNRAID_USER}@${UNRAID_HOST}"
 
-echo "🚀 Deploying License API to Unraid..."
+echo "🚀 Deploying Licensing Service to Unraid..."
 echo ""
 
 # Step 1: Sync application code
-echo "📦 Step 1/5: Syncing application code..."
+echo "📦 Step 1/6: Syncing application code..."
 rsync -az --delete \
     --exclude 'node_modules' \
     --exclude 'dist' \
+    --exclude '.env' \
     --exclude '.env.local' \
     --exclude '*.db' \
     --exclude '*.db-journal' \
-    ./apps/license-api/ $UNRAID_SSH:$DEPLOY_PATH/apps/license-api/
+    ./apps/ $UNRAID_SSH:$DEPLOY_PATH/apps/
 
 echo "✅ Code synced"
 echo ""
 
-# Step 2: Sync shared libs
-echo "📚 Step 2/5: Syncing shared libraries..."
-rsync -az --delete \
-    --exclude 'node_modules' \
-    ./libs/ $UNRAID_SSH:$DEPLOY_PATH/libs/
+# Step 2: Sync Prisma schema and migrations
+echo "🗄️  Step 2/6: Syncing Prisma schema..."
+rsync -az --delete ./prisma/ $UNRAID_SSH:$DEPLOY_PATH/prisma/
 
-echo "✅ Libraries synced"
+echo "✅ Prisma synced"
 echo ""
 
 # Step 3: Sync package files
-echo "📋 Step 3/5: Syncing package configuration..."
+echo "📋 Step 3/6: Syncing package configuration..."
 rsync -az \
     ./package.json \
     ./package-lock.json \
-    ./tsconfig.json \
     ./nx.json \
     $UNRAID_SSH:$DEPLOY_PATH/
 
 echo "✅ Package files synced"
 echo ""
 
-# Step 4: Create docker-compose if doesn't exist
-echo "🐳 Step 4/5: Setting up Docker environment..."
+# Step 4: Sync docker configs
+echo "🐳 Step 4/6: Syncing Docker configurations..."
+rsync -az ./docker/ $UNRAID_SSH:$DEPLOY_PATH/docker/
+
+echo "✅ Docker configs synced"
+echo ""
+
+# Step 5: Setup Docker environment
+echo "🐳 Step 5/6: Setting up Docker environment..."
 ssh $UNRAID_SSH "mkdir -p $DEPLOY_PATH"
 
 cat << 'EOF' | ssh $UNRAID_SSH "cat > $DEPLOY_PATH/docker-compose.yml"
@@ -57,23 +62,22 @@ version: '3.8'
 services:
   license-api:
     image: node:20-alpine
-    container_name: bitbonsai-license-api
+    container_name: licensing-service-api
     working_dir: /app
     volumes:
       - ./:/app
-      - /app/node_modules
     ports:
       - "3200:3200"
     environment:
       - NODE_ENV=production
-      - LICENSE_API_PORT=3200
+      - PORT=3200
     env_file:
       - .env
     command: >
       sh -c "
         if [ ! -d node_modules ]; then
           echo '📦 Installing dependencies...' &&
-          npm ci
+          npm ci --legacy-peer-deps
         fi &&
         echo '🔨 Building application...' &&
         npx nx build license-api --skip-nx-cache &&
@@ -91,8 +95,8 @@ EOF
 echo "✅ Docker compose configured"
 echo ""
 
-# Step 5: Start/restart container
-echo "♻️  Step 5/5: Starting license-api container..."
+# Step 6: Start/restart container
+echo "♻️  Step 6/6: Starting license-api container..."
 ssh $UNRAID_SSH "cd $DEPLOY_PATH && docker-compose up -d"
 
 echo "✅ Container started"
@@ -108,14 +112,14 @@ else
     echo "⚠️  Health check failed (may still be starting)"
     echo ""
     echo "Check logs:"
-    echo "  ssh $UNRAID_SSH 'docker logs -f bitbonsai-license-api'"
+    echo "  ssh $UNRAID_SSH 'docker logs -f licensing-service-api'"
 fi
 
 echo ""
 echo "🎉 Deployment complete!"
 echo ""
 echo "📍 License API: http://192.168.1.100:3200/api"
-echo "📍 Public URL:  https://api.bitbonsai.app (after tunnel config)"
+echo "📍 Public URL:  https://api.bitbonsai.app (or your configured domain)"
 echo ""
 echo "💡 Watch logs:"
-echo "   ssh $UNRAID_SSH 'docker logs -f bitbonsai-license-api'"
+echo "   ssh $UNRAID_SSH 'docker logs -f licensing-service-api'"
