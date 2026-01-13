@@ -322,14 +322,14 @@ export class LicensesComponent implements OnInit, OnDestroy {
   /**
    * Revoke license
    */
-  revokeLicense(license: { id: number; email: string }): void {
-    if (!confirm(LicensesBo.getRevokeConfirmationMessage(license as { id: number; email: string })))
+  revokeLicense(license: License): void {
+    if (!confirm(LicensesBo.getRevokeConfirmationMessage({ id: Number(license.id), email: license.email })))
       return;
 
     const reason = prompt('Reason for revoking:');
     if (!reason) return;
 
-    this.store.dispatch(LicensesActions.revokeLicense({ licenseId: license.id, reason }));
+    this.store.dispatch(LicensesActions.revokeLicense({ licenseId: Number(license.id), reason }));
 
     // Reload licenses after revocation
     setTimeout(() => this.loadLicenses(), 500);
