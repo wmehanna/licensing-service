@@ -102,7 +102,7 @@ import { LicensesBo } from './licenses.bo';
         <div class="bb-pagination">
           <button
             class="bb-btn bb-btn--outline"
-            [disabled]="!LicensesBo.canGoPrevious(currentPage$ | async ?? 0)"
+            [disabled]="!LicensesBo.canGoPrevious((currentPage$ | async) ?? 0)"
             (click)="previousPage()"
           >
             Previous
